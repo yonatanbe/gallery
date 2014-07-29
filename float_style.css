@@ -1,0 +1,42 @@
+.fl-main {
+}
+
+.fl-header{
+    background: #ffff00;
+}
+
+.fl-header, .fl-footer {
+    padding: 10px;
+    text-align: center;
+}
+
+.fl-wrapper {
+    border: 3px solid hotpink;
+    overflow: hidden;
+}
+
+.fl-content{
+    background: #ff0000;
+    width: 70%;
+    /*float: left;*/
+}
+
+.fl-aside{
+    background: #008000;
+    width: 30%;
+    /*float: right;*/
+}
+
+.fl-content, .fl-aside {
+    margin: 0;
+    display: table-cell;
+}
+
+.fl-footer {
+    background: mediumorchid;
+    clear: both;
+}
+
+p, h2 {
+    padding: 10px;
+}
