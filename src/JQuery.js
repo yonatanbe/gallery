@@ -40,17 +40,30 @@ function jDom(context, exports) {
         return this.element.hasAttribute(attrName);
     };
 
-    jDomItem.prototype.clone = function () {
-        return new jDomItem(this.element);
+    jDomItem.prototype.clone = function (isDeep) {
+        return new jDomItem(this.element.cloneNode(isDeep));
     };
 
     jDomItem.prototype.html = function (newHtml) {
-//        if(newHtml){
-//            this.element.innerHTML = newHtml;
-//            return this;
-//        }
-//        return this.element.innerHTML;
-        return newHtml !== undefined ? this.element.innerHTML = newHtml || this : this.element.innerHTML;
+        if(newHtml !== undefined){
+            this.element.innerHTML = newHtml;
+            return this;
+        }
+        return this.element.innerHTML;
+//        return newHtml !== undefined ? this.element.innerHTML = newHtml || this : this.element.innerHTML;
+    };
+
+    jDomItem.prototype.text = function (newText) {
+        if(newText !== undefined){
+            this.element.textContent = newText;
+            return this;
+        }
+        return this.element.textContent;
+    };
+
+    jDomItem.prototype.remove = function () {
+        this.element.remove();
+        return this;
     };
 
     //////////////////////////////////////////////////////////////////////
@@ -93,8 +106,10 @@ function jDom(context, exports) {
         return this.nodes.length;
     };
 
-    jDOMCollection.prototype.clone = function () {
-        return this.map(jDomItem.prototype.clone);
+    jDOMCollection.prototype.clone = function (isDeep) {
+        return this.map(function (item) {
+            return item.clone(isDeep);
+        });
     };
 
     jDOMCollection.prototype.html = function (newHtml) {
@@ -102,6 +117,17 @@ function jDom(context, exports) {
             return this.each(function () { this.html(newHtml); })
         }
         return this.nodes[0].html();
+    };
+
+    jDOMCollection.prototype.text = function (newText) {
+        if(newText !== undefined){
+            return this.each(function () { this.text(newText); })
+        }
+        return this.nodes[0].text();
+    };
+
+    jDOMCollection.prototype.remove = function () {
+        return this.each(function () { this.remove(); })
     };
 
     jDOMCollection.prototype.each = function (func) {

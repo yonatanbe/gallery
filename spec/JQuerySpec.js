@@ -77,9 +77,10 @@ describe("JQuery library Tests", function() {
     });
 
     it('tests the clone function', function () {
-        var col = collection.clone();
+        var col = collection.clone(true);
         expect(col.nodes[0].element.innerHTML).toEqual(collection.nodes[0].element.innerHTML);
         expect(col.nodes[1].element.innerHTML).toEqual(collection.nodes[1].element.innerHTML);
+        expect(col.nodes[0]).not.toBe(collection.nodes[0]);
     });
 
     it('tests the html with no arg function', function () {
@@ -92,4 +93,21 @@ describe("JQuery library Tests", function() {
         expect(collection.nodes[1].element.innerHTML).toEqual('<div id="ab">INNER</div>');
     });
 
+    it('tests the text with no arg function', function () {
+        collection.text();
+        expect(collection.text()).toEqual(collection.nodes[0].element.textContent);
+    });
+
+    it('tests the text with an arg function', function () {
+        collection.text('INNER');
+        expect(collection.nodes[0].element.textContent).toEqual('INNER');
+        expect(collection.nodes[1].element.textContent).toEqual('INNER');
+    });
+
+    it('tests the remove function', function () {
+        document.body.innerHTML = '<div><ul></ul></div><div><ol></ol></div>';
+        collection = $('ul');
+        collection.remove();
+        expect(document.body.innerHTML).toEqual('<div></div><div><ol></ol></div>');
+    });
 });
