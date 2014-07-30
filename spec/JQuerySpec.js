@@ -93,6 +93,11 @@ describe("JQuery library Tests", function() {
         expect(collection.nodes[1].element.innerHTML).toEqual('<div id="ab">INNER</div>');
     });
 
+    it('tests the html with no arg that returns undefined function', function () {
+        var col = $('bla');
+        expect(col.html()).toEqual(undefined);
+    });
+
     it('tests the text with no arg function', function () {
         collection.text();
         expect(collection.text()).toEqual(collection.nodes[0].element.textContent);
@@ -104,10 +109,52 @@ describe("JQuery library Tests", function() {
         expect(collection.nodes[1].element.textContent).toEqual('INNER');
     });
 
+    it('tests the text with no arg that returns undefined function', function () {
+        var col = $('bla');
+        expect(col.text()).toEqual(undefined);
+    });
+
     it('tests the remove function', function () {
         document.body.innerHTML = '<div><ul></ul></div><div><ol></ol></div>';
         collection = $('ul');
         collection.remove();
         expect(document.body.innerHTML).toEqual('<div></div><div><ol></ol></div>');
     });
+
+    it('tests the empty function', function () {
+        collection.empty();
+        expect(document.body.innerHTML).toEqual('<div id="ab"></div><div></div>');
+    });
+
+    it('tests the eq function', function () {
+        var col = collection.eq(1);
+        expect(col.html()).toEqual('Test2');
+    });
+
+    it('tests the $ for elements', function () {
+        var col = $(collection.nodes[0].element);
+        expect(col.nodes[0].element instanceof Element).toBeTruthy();
+    });
+
+//    ASK BARAK HOW TO WORK WITH APPENDTO
+//    it('tests appendTo with selector arg', function () {
+//
+//        expect(col.nodes[0].element instanceof Element).toBeTruthy();
+//    });
+
+    it('tests the appendTo for htmlString', function () {
+        collection.append('<span>123</span>');
+        expect(collection.nodes[0].element.innerHTML).toEqual('Test<span>123</span>');
+    });
+
+    it('tests the appendTo for element', function () {
+        collection.append(document.createElement('div'));
+        expect(collection.nodes[0].element.innerHTML).toEqual('Test<div></div>');
+    });
+
+    it('tests the before for element', function () {
+        collection.before(document.createElement('div'));
+        expect(document.body.innerHTML).toEqual('<div></div><div id="ab">Test</div><div></div><div>Test2</div>');
+    });
+
 });

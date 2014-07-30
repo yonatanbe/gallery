@@ -66,6 +66,30 @@ function jDom(context, exports) {
         return this;
     };
 
+    jDomItem.prototype.empty = function (){
+        var child;
+        while(child = this.element.firstChild){
+            this.element.removeChild(child);
+        }
+        return this;
+    };
+
+    jDomItem.prototype.append = function (itemToAppend) {
+        if(typeof itemToAppend === 'string'){
+            return this.element.innerHTML += itemToAppend;
+        } else {
+            return this.element.appendChild(itemToAppend.cloneNode(true));
+        }
+    };
+
+    jDomItem.prototype.before = function (itemToInsert) {
+        if(typeof itemToInsert === 'string'){
+            return this.element.innerHTML += itemToAppend;
+        } else {
+            return this.element.parentNode.insertBefore(itemToInsert.cloneNode(true), this.element);
+        }
+    };
+
     //////////////////////////////////////////////////////////////////////
 
     function jDOMCollection(jDomItems) {
@@ -116,18 +140,40 @@ function jDom(context, exports) {
         if(newHtml !== undefined){
             return this.each(function () { this.html(newHtml); })
         }
-        return this.nodes[0].html();
+        return (this.nodes[0] && this.nodes[0].html()) || undefined;
     };
 
     jDOMCollection.prototype.text = function (newText) {
         if(newText !== undefined){
             return this.each(function () { this.text(newText); })
         }
-        return this.nodes[0].text();
+        return (this.nodes[0] && this.nodes[0].text()) || undefined;
     };
 
     jDOMCollection.prototype.remove = function () {
         return this.each(function () { this.remove(); })
+    };
+
+    jDOMCollection.prototype.empty = function () {
+        return this.each(function () { this.empty(); })
+    };
+
+    jDOMCollection.prototype.eq = function (index) {
+        var ans;
+        if(this.nodes[index]){
+            ans = new jDOMCollection([this.nodes[index]]);
+        } else {
+            ans = new jDOMCollection([]);
+        }
+        return ans;
+    };
+
+    jDOMCollection.prototype.append = function (itemToAppend) {
+        return this.each(function () { this.append(itemToAppend); })
+    };
+
+    jDOMCollection.prototype.before = function (itemToInsert) {
+        return this.each(function () { this.before(itemToInsert); })
     };
 
     jDOMCollection.prototype.each = function (func) {
@@ -152,6 +198,8 @@ function jDom(context, exports) {
         if (typeof selectorOrNode === 'string') {
             var nlist = root.querySelectorAll(selectorOrNode);
             return new jDOMCollection($.nodeListToArrayOfjDomItems(nlist));
+        } else if(selectorOrNode instanceof Element) {
+            return new jDOMCollection([new jDomItem(selectorOrNode)]);
         } else {
             throw new Error('TODO: implement more modes');
         }
