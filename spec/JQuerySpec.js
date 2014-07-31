@@ -177,9 +177,34 @@ describe("JQuery library Tests", function() {
         expect(document.body.innerHTML).toEqual('<div id="ab">Test</div><div></div><div>Test2</div><div></div>');
     });
 
-    it('tests the children function', function () {
-        collection.after('<div></div>');
-        expect(document.body.innerHTML).toEqual('<div id="ab">Test</div><div></div><div>Test2</div><div></div>');
+});
+
+describe("JQuery library Tests from children", function() {
+    var collection;
+
+    beforeEach(function () {
+        document.body.innerHTML = '<div id="ab"><span><ul></ul></span><ol></ol></div><div><ul></ul></div>';
+        collection = $('div');
     });
+
+    it('tests the children function', function () {
+        expect(collection.children().nodes.length).toEqual(3);
+    });
+
+    it('tests the next function', function () {
+        expect(collection.next().nodes.length).toEqual(1);
+    });
+
+    it('tests the prev function', function () {
+        expect(collection.prev().nodes.length).toEqual(1);
+    });
+
+//    it('tests the nextAll function', function () {
+//        expect(collection.nextAll().nodes.length).toEqual(1);
+//    });
+
+//    it('tests the siblings function', function () {
+//        expect(collection.siblings().nodes.length).toEqual(2);
+//    });
 
 });

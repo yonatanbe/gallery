@@ -7,27 +7,27 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div class="gl-main">
-            <header class="gl-header">
-                <h1>Gallery Header!</h1>
+        <div id="gl-main">
+            <header id="gl-header">
+                <h1 class="text-prettify">Gallery Header!</h1>
                 <div class="gl-header-menu">
-                    <span class="gl-menu-item gl-menu-counter">Items: {{counter}}/{{total}}</span>
-                    <span class="gl-menu-item gl-menu-status-bar">Selected: {{src}}</span>
-                    <span class="gl-menu-item gl-menu-search">
-                        <form>
-                            <label for="search">Search
-                                <input type="text" name="search" id="search" placeholder="search for..">
-                                <button name="submit">Submit</button>
+                    <span class="gl-menu-item gl-menu-counter text-prettify">Items: <span id="gl-menu-counter-displayed text-prettify">{{counter}}</span>/<span id="gl-menu-counter-total text-prettify">{{total}}</span></span>
+                    <span class="gl-menu-item gl-menu-status-bar text-prettify">Selected: {{src}}</span>
+                    <span class="gl-menu-item gl-menu-search text-prettify">
+                        <form id="gl-search-from">
+                            <label >Search
+                                <input class="text-prettify" type="text" name="search" id="gl-search-input" placeholder="search for..">
+                                <button id="search-submit-button" name="submit">Submit</button>
                             </label>
                         </form>
                     </span>
-                    <span class="gl-menu-item gl-menu-view-type">View-Type</span>
+                    <span class="gl-menu-item gl-menu-view-type text-prettify">View-Type</span>
                 </div>
             </header>
-            <div class="gl-items-container">
+            <div id="gl-items-container">
                 <!--   <div class="gl-item">
                     <div class="gl-item-header">
-                        <h3 class="gl-small-margin-h3">{{Title}}</h3>
+                        <h3 class="small-margin">{{Title}}</h3>
                     </div>
                     <div class="gl-item-content">
                         <img src="http://dummyimage.com/200x142/0a0af5/fff.jpg" alt="blue pic">
@@ -38,8 +38,8 @@
                     </div>
                 </div> -->
             </div>
-            <footer class="gl-footer">
-                <h3>Gallery Footer!</h3>
+            <footer>
+                <h3 class="small-margin text-prettify">Gallery Footer!</h3>
             </footer>    
         </div>
         <script type="text/javascript" src="main.js"></script>

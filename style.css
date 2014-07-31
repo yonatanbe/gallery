@@ -1,5 +1,6 @@
 body {
-    background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlHq5NO3uVIJnszY0nKoMIU0uPBEphHqQFqQLqK5MvPU5ilnJ_');
+    /*background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlHq5NO3uVIJnszY0nKoMIU0uPBEphHqQFqQLqK5MvPU5ilnJ_');*/
+    background-image:url('http://77wallpaper.com/wp-content/uploads/2014/07/Dark-Background-21.jpg');
 }
 
 .gl-item {
@@ -8,14 +9,17 @@ body {
     border: 2px solid #1d9fb0;
     border-radius: 10px;
     text-align: center;
-    background: #f4ebb9;
+    background: rgba(245, 241, 218, 0.6);
     display: inline-block;
     margin: 8px;
-
+    vertical-align: top;
 }
 
-.gl-small-margin-h3 {
+h3.small-margin {
     margin: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .gl-item-footer-button {
@@ -44,7 +48,7 @@ body {
     margin-right: 25px;
 }
 
-.gl-items-container {
+#gl-items-container {
     margin: 0 auto;
     text-align: center;
 }
@@ -57,4 +61,9 @@ input {
     border: 2px solid #1d9fb0;
     border-radius: 6px;
     padding: 4px;
+}
+
+.text-prettify {
+    color: rgb(13, 115, 163);
+    text-shadow: 1px 1px rgba(255, 255, 255, 0.3);
 }

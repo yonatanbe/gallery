@@ -116,6 +116,16 @@ function jDom(context, exports) {
         }
     };
 
+    jDomItem.prototype.on = function (event, func) {
+        this.element.addEventListener(event, func);
+        return this;
+    };
+
+    jDomItem.prototype.off = function (event, func) {
+        this.element.removeEventListener(event, func);
+        return this;
+    };
+
     //////////////////////////////////////////////////////////////////////
 
     function jDOMCollection(jDomItems) {
@@ -210,6 +220,54 @@ function jDom(context, exports) {
     jDOMCollection.prototype.after = function (itemToInsert) {
         return this.each(function () { this.after(itemToInsert); })
     };
+
+    jDOMCollection.prototype.children = function () {
+        var childJDomItemsList = this.nodes.reduce(function (childList, currElement) {
+            return childList.concat($.nodeListToArrayOfjDomItems(currElement.element.children));
+        }, []);
+
+        return new jDOMCollection(childJDomItemsList);
+    };
+
+    jDOMCollection.prototype.next = function () {
+        var prevSiblingsJDomItemsList = this.nodes.reduce(function (siblingList, currElement) {;
+            if(currElement.element.nextSibling){
+                return siblingList.concat(new jDomItem(currElement.element.nextSibling));
+            } else {
+                return siblingList;
+            }
+        }, []);
+
+        return new jDOMCollection(prevSiblingsJDomItemsList);
+    };
+
+    jDOMCollection.prototype.prev = function () {
+        var prevSiblingsJDomItemsList = this.nodes.reduce(function (siblingList, currElement) {;
+            if(currElement.element.nextSibling){
+                return siblingList.concat(new jDomItem(currElement.element.previousSibling));
+            } else {
+                return siblingList;
+            }
+        }, []);
+
+        return new jDOMCollection(prevSiblingsJDomItemsList);
+    };
+
+    jDOMCollection.prototype.on = function (event, func) {
+        return this.each(function () { this.on(event, func); })
+    };
+
+    jDOMCollection.prototype.off = function (event, func) {
+        return this.each(function () { this.off(event, func); })
+    };
+
+//    jDOMCollection.prototype.siblings = function () {
+//        var siblingsJDomItemsList = this.nodes.reduce(function (siblingsList, currElement) {
+//            return siblingsList.concat($.nodeListToArrayOfjDomItems(currElement.element.siblings));
+//        }, []);
+//
+//        return new jDOMCollection(siblingsJDomItemsList);
+//    };
 
     jDOMCollection.prototype.each = function (func) {
         this.nodes.forEach(function (item, index, array) {
