@@ -3,45 +3,35 @@
     <head>
         <title>My Gallery</title>
         <meta charset="utf-8">
-        <!-- <script type="text/javascript" src="main.js"></script> -->
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div id="gl-main">
             <header id="gl-header">
-                <h1 class="text-prettify">Gallery Header!</h1>
+                <h1 class="text-prettify">Magic Gallery!</h1>
                 <div class="gl-header-menu">
-                    <span class="gl-menu-item gl-menu-counter text-prettify">Items: <span id="gl-menu-counter-displayed text-prettify">{{counter}}</span>/<span id="gl-menu-counter-total text-prettify">{{total}}</span></span>
-                    <span class="gl-menu-item gl-menu-status-bar text-prettify">Selected: {{src}}</span>
+                    <span class="gl-menu-item gl-menu-counter text-prettify">Items: <span id="gl-menu-counter-displayed" class="text-prettify">{{counter}}</span>/<span id="gl-menu-counter-total" class="text-prettify">{{total}}</span></span>
+                    <span class="gl-menu-item gl-menu-status-bar text-prettify">Selected: <span id="gl-menu-selected-text">{{src}}</span></span>
                     <span class="gl-menu-item gl-menu-search text-prettify">
                         <form id="gl-search-from">
                             <label >Search
                                 <input class="text-prettify" type="text" name="search" id="gl-search-input" placeholder="search for..">
-                                <button id="search-submit-button" name="submit">Submit</button>
+                                <button id="search-submit-button" name="submit" data-action="search" style="background-image:url(res/search-icon.png)"></button>
                             </label>
                         </form>
                     </span>
-                    <span class="gl-menu-item gl-menu-view-type text-prettify">View-Type</span>
+                    <span class="gl-menu-item gl-menu-view-type text-prettify">
+                        <button id="gl-menu-grid-view" data-action="grid-view" style="background-image:url(res/grid-icon.png)"></button>
+                        <button id="gl-menu-list-view" data-action="list-view" style="background-image:url(res/list-icon.png)"></button>
+                    </span>
                 </div>
             </header>
-            <div id="gl-items-container">
-                <!--   <div class="gl-item">
-                    <div class="gl-item-header">
-                        <h3 class="small-margin">{{Title}}</h3>
-                    </div>
-                    <div class="gl-item-content">
-                        <img src="http://dummyimage.com/200x142/0a0af5/fff.jpg" alt="blue pic">
-                    </div>
-                    <div class="gl-item-footer">
-                        <button class="gl-item-footer-button">Remove</button>
-                        <button class="gl-item-footer-button">Edit</button>
-                    </div>
-                </div> -->
-            </div>
+            <div id="gl-items-container"></div>
             <footer>
-                <h3 class="small-margin text-prettify">Gallery Footer!</h3>
+                <h3 class="small-margin text-prettify"></h3>
             </footer>    
         </div>
+        <script type="text/javascript" src="src/JQuery.js"></script>
         <script type="text/javascript" src="main.js"></script>
     </body>
 </html>

@@ -1,9 +1,8 @@
 body {
-    /*background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlHq5NO3uVIJnszY0nKoMIU0uPBEphHqQFqQLqK5MvPU5ilnJ_');*/
     background-image:url('http://77wallpaper.com/wp-content/uploads/2014/07/Dark-Background-21.jpg');
 }
 
-.gl-item {
+.gl-item-grid {
     width: 200px;
     padding: 8px;
     border: 2px solid #1d9fb0;
@@ -15,15 +14,22 @@ body {
     vertical-align: top;
 }
 
+.gl-item-list {
+    width: 20%;
+    height: 5%;
+    padding: 8px;
+    border: 2px solid #1d9fb0;
+    border-radius: 10px;
+    background: rgba(245, 241, 218, 0.3);
+    display: inline-block;
+    margin: 8px;
+}
+
 h3.small-margin {
     margin: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.gl-item-footer-button {
-    width: 45%;
 }
 
 .gl-item-footer-button:hover {
@@ -66,4 +72,28 @@ input {
 .text-prettify {
     color: rgb(13, 115, 163);
     text-shadow: 1px 1px rgba(255, 255, 255, 0.3);
+    text-align: center;
+    font-family: cursive, sans-serif;
+}
+
+.gl-header-menu {
+    text-align: center;
+    font-size: 24px;
+}
+
+button{
+    width:30px;
+    height:30px;
+    background-size: 100%;
+    border: 2px solid transparent;
+    border-radius: 8px;
+}
+
+button:hover{
+    border: 2px solid #1d9fb0;
+}
+
+.gl-item-footer-button {
+    width: 45%;
+    margin: 4px;
 }

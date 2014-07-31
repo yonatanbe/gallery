@@ -1,43 +1,44 @@
-function GalleryItemsContainer() {
+function Gallery() {
 
-    var gallery = document.querySelector('#gl-main');
-    var itemsContainer = document.querySelector('#gl-items-container');
-//    var footer = document.querySelector('.gl-footer');
-    var displayedCounter = document.querySelector('#gl-menu-counter-displayed');
-    var totalCounter = document.querySelector('#gl-menu-counter-total');
-    var searchInput = document.querySelector('#gl-search-input');
+    var itemsContainer = document.querySelector('#gl-items-container'),
+        displayedCounter = document.querySelector('#gl-menu-counter-displayed'),
+        totalCounter = document.querySelector('#gl-menu-counter-total'),
+        selectedItemText = document.querySelector('#gl-menu-selected-text'),
+        searchInput = document.querySelector('#gl-search-input');
 
     var itemId = 0,
-        totalItems = 0,
-        currDisplayedItems = 0;
+        totalItemsCount = 0,
+        currDisplayedItemsCount = 0,
+        allItems = [],
+        currentDisplayedItems = [],
+        itemCapacityPerPage = 18,
+        itemsLeftForDisplaying = 0,
+        currView = 'grid';
 
     initItemsContainer();
 
     function initItemsContainer() {
-        // TODO - initialize the counter and totoal
-
-        bindRemoveButtonsClick();
+        totalCounter.textContent = totalItemsCount;
+        updateCountHeader();
+        selectedItemText.textContent = 'None';
+        bindButtonsClick();
+        bindScrolling();
     }
 
     function addGalleryItem(title, imgSrc, imgAlt) {
 
         var galleryItem = createGalleryItem(title, imgSrc, imgAlt);
         itemsContainer.appendChild(galleryItem);
-
-        totalItems++;
-        displayedCounter.textContent = totalItems;
     }
 
     function createGalleryItem(title, imgSrc, imgAlt) {
 
-        var item = createElementWithClassName('div', ['gl-item']);
+        var item = createElementWithClassName('div', ['gl-item', 'gl-item-grid']);
         var itemHeader = createItemHeader(title);
         var itemContent = createItemContent(imgSrc, imgAlt);
         var itemFooter = createItemFooter();
 
-        item.appendChild(itemHeader);
-        item.appendChild(itemContent);
-        item.appendChild(itemFooter);
+        appendChilds(item, [itemHeader, itemContent, itemFooter]);
 
         item.id = itemId++;
 
@@ -71,74 +72,109 @@ function GalleryItemsContainer() {
         return itemContent;
     }
 
+    function appendChilds(element, elementsToAppend) {
+        elementsToAppend.forEach(function (elementToAppend) {
+            element.appendChild(elementToAppend);
+        })
+    }
+
     function createItemFooter() {
         var itemFooter = createElementWithClassName('div', ['gl-item-footer']);
 
         var removeBtn = createElementWithClassName('BUTTON', ['gl-item-footer-button', 'gl-item-footer-button-rmv']);
-        removeBtn.textContent = 'Remove';
-        removeBtn.dataset.id = itemId;
+        initItemButton(removeBtn, 'remove-btn', 'Remove');
 
         var editBtn = createElementWithClassName('BUTTON', ['gl-item-footer-button', 'gl-item-footer-button-edit']);
-        editBtn.textContent = 'Edit';
-        editBtn.dataset.id = itemId;
+        initItemButton(editBtn, 'edit-btn', 'Edit');
 
-        itemFooter.appendChild(removeBtn);
-        itemFooter.appendChild(editBtn);
-
-//        connectRemoveButtonClick(removeBtn);
+        appendChilds(itemFooter, [removeBtn, editBtn]);
 
         return itemFooter;
     }
 
-    function bindRemoveButtonsClick () {
+    function initItemButton(btn, actionString, text) {
+        btn.setAttribute('data-action', actionString);
+        btn.textContent = text;
+        btn.dataset.id = itemId;
+    }
+
+    function bindButtonsClick () {
         document.body.addEventListener('click', handleItemClickEvent, false);
     }
 
+    function handleGridViewPressed() {
+        if(currView != 'grid'){
+
+        }
+    }
+
     function handleItemClickEvent(event) {
-        if(event.target.classList.contains('gl-item-footer-button-rmv')){
-            removeGalleryItem(event);
-        } else if(event.target.classList.contains('gl-item-footer-button-edit')){
-            editGalleryItem(event);
-        } else if(event.target.id === 'search-submit-button'){
-            event.preventDefault();
-            event.stopPropagation();
-            handleSearchButtonPressed(event);
+        event.preventDefault();
+        event.stopPropagation();
+        switch(event.target.dataset.action){
+            case 'search':
+                handleSearchButtonPressed();
+                break;
+            case 'remove-btn':
+                removeGalleryItem(event);
+                break;
+            case 'edit-btn':
+                editGalleryItem(event);
+                break;
+            case 'grid-view':
+                handleGridViewPressed();
+                break;
+            case 'list-view':
+                handleListViewPressed();
+                break;
+            default :
+                throw Error('This can\'t be the right button');
+                break;
         }
     }
 
     function removeGalleryItem(event) {
         var itemIdToRemove = event.target.dataset.id;
-//        $('#'+itemIdToRemove).remove();
-
         var itemToRemove = document.getElementById(itemIdToRemove);
         itemsContainer.removeChild(itemToRemove);
     }
 
     function editGalleryItem(event) {
         var itemIdToEdit = event.target.dataset.id;
-//        $('#'+itemIdToEdit).append();
-
         var itemToEdit = document.getElementById(itemIdToEdit);
         itemsContainer.appendChild(itemToEdit);
     }
 
-    function handleSearchButtonPressed(event) {
+    function handleSearchButtonPressed() {
         if(searchInput.value !== ""){
             makeRequest(onLoadHandler, searchInput.value);
         }
     }
 
-    function onLoadHandler() {
-        var responseObject = JSON.parse(this.responseText);
-        responseObject.forEach(function (item) {
+    function addNextItemsToGallery(start, end) {
+        currentDisplayedItems = allItems.slice(start, end);
+        currentDisplayedItems.forEach(function (item) {
             addGalleryItem(item['name'], item['imgUrl'], item['type']);
         })
     }
 
+    function onLoadHandler() {
+        try {
+            allItems = JSON.parse(this.responseText);
+            console.log(allItems);
+            currDisplayedItemsCount = allItems.length >= itemCapacityPerPage ?
+                itemCapacityPerPage : allItems.length;
+            totalItemsCount = allItems.length;
+            totalCounter.textContent = totalItemsCount;
+            updateCountHeader();
+            itemsLeftForDisplaying = totalItemsCount - currDisplayedItemsCount;
+            addNextItemsToGallery(0, currDisplayedItemsCount);
+        } catch (e){
+            console.log('Something went wrong when parsing the server response: ' + e.message);
+        }
+    }
+
     function makeRequest(onLoadEvent, searchInput){
-
-        // TODO - add try catch
-
         var xhr = new XMLHttpRequest();
         xhr.open('get', 'http://localhost:3001/search/' + searchInput, true);
         xhr.onload = onLoadEvent;
@@ -153,76 +189,35 @@ function GalleryItemsContainer() {
         return element;
     }
 
-    return {
-        addGalleryItem: addGalleryItem
+    function bindScrolling() {
+        window.addEventListener('scroll', function () {
+            var body = document.body,
+                html = document.documentElement;
+
+            var height = Math.max( body.scrollHeight, body.offsetHeight,
+                html.clientHeight, html.scrollHeight, html.offsetHeight );
+
+            if (height <= document.body.scrollTop + window.innerHeight) {
+                scrollMore();
+            }
+        });
+    }
+
+    function updateCountHeader() {
+        displayedCounter.textContent = currDisplayedItemsCount;
+    }
+
+    function scrollMore() {
+        if(itemsLeftForDisplaying > 0){
+            var endItemToDisplay = (itemsLeftForDisplaying >= itemCapacityPerPage ?
+                currDisplayedItemsCount + itemCapacityPerPage : totalItemsCount);
+            addNextItemsToGallery(currDisplayedItemsCount, endItemToDisplay);
+            itemsLeftForDisplaying -= itemCapacityPerPage;
+            currDisplayedItemsCount = endItemToDisplay;
+            updateCountHeader();
+        }
     }
 
 }
 
-var galleryItemsContainer = GalleryItemsContainer();
-
-//galleryItemsContainer.addGalleryItem('my title1!', 'http://dummyimage.com/200x142/0a0af5/fff.jpg', 'blue pic');
-//galleryItemsContainer.addGalleryItem('my title2!', 'http://dummyimage.com/200x142/0a0af5/fff.jpg', 'blue pic');
-//galleryItemsContainer.addGalleryItem('my title3!', 'http://dummyimage.com/200x142/0a0af5/fff.jpg', 'blue pic');
-//galleryItemsContainer.addGalleryItem('my title4!', 'http://dummyimage.com/200x142/0a0af5/fff.jpg', 'blue pic');
-
-
-//var MyGL = {
-//
-//    allItems: [],
-//    displayedItems: 0,
-//    itemId: 0,
-//
-//    init:function(setup){
-//        this.setup = setup;
-//        this.markup();
-//        this.bindEvents();
-//    },
-//    markup:function(){
-//        this.$root = $(this.setup.root);
-//        this.$itemsContainer = $(this.setup.itemsContainer);
-//        this.$header = $(this.setup.glHeader);
-//        this.$footer = $(this.setup.glFooter);
-//        this.$displayedItemsCounter = $(this.setup.displayedCounter);
-//        this.$totalItemsCounter = $(this.setup.totalItemsCounter);
-//    },
-//
-//    bindEvents: function(){
-//
-//        this.$root.on('click', function(evt){
-//            evt.target.remove();
-//        })
-//
-//
-//
-//    },
-//
-//    updateGlItems:function(){
-//
-//    },
-//
-//    searchItems: function(){
-//
-//    },
-//
-//    removeAllEvents:function(){
-//
-//    },
-//
-//    destroy:function(){
-//        this.$root.remove();
-//        this.removeAllEvents();
-//    }
-//
-//};
-//
-//
-//MyGL.init({
-//    root:'#gl-main',
-//    itemsContainer:'#gl-items-container',
-//    glHeader: '#gl-header',
-//    glFooter: '#gl-footer',
-//    displayedCounter: '#gl-menu-counter-displayed',
-//    totalItemsCounter: '#gl-menu-counter-total'
-//});
-//
+Gallery();
