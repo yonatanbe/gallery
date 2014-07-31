@@ -126,8 +126,13 @@ describe("JQuery library Tests", function() {
         expect(document.body.innerHTML).toEqual('<div id="ab"></div><div></div>');
     });
 
-    it('tests the eq function', function () {
+    it('tests the eq function for positive index', function () {
         var col = collection.eq(1);
+        expect(col.html()).toEqual('Test2');
+    });
+
+    it('tests the eq function for negative index', function () {
+        var col = collection.eq(-1);
         expect(col.html()).toEqual('Test2');
     });
 
@@ -155,6 +160,26 @@ describe("JQuery library Tests", function() {
     it('tests the before for element', function () {
         collection.before(document.createElement('div'));
         expect(document.body.innerHTML).toEqual('<div></div><div id="ab">Test</div><div></div><div>Test2</div>');
+    });
+
+    it('tests the before for stringHtml', function () {
+        collection.before('<div></div>');
+        expect(document.body.innerHTML).toEqual('<div></div><div id="ab">Test</div><div></div><div>Test2</div>');
+    });
+
+    it('tests the after for element', function () {
+        collection.after(document.createElement('div'));
+        expect(document.body.innerHTML).toEqual('<div id="ab">Test</div><div></div><div>Test2</div><div></div>');
+    });
+
+    it('tests the after for stringHtml', function () {
+        collection.after('<div></div>');
+        expect(document.body.innerHTML).toEqual('<div id="ab">Test</div><div></div><div>Test2</div><div></div>');
+    });
+
+    it('tests the children function', function () {
+        collection.after('<div></div>');
+        expect(document.body.innerHTML).toEqual('<div id="ab">Test</div><div></div><div>Test2</div><div></div>');
     });
 
 });

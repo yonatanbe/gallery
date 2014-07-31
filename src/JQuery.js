@@ -82,11 +82,37 @@ function jDom(context, exports) {
         }
     };
 
+    function insertElementBefore(elementToInsertBefore, itemToInsert) {
+        return elementToInsertBefore.parentNode.insertBefore(itemToInsert, elementToInsertBefore);
+    }
+
     jDomItem.prototype.before = function (itemToInsert) {
         if(typeof itemToInsert === 'string'){
-            return this.element.innerHTML += itemToAppend;
+            var div = document.createElement('div');
+            div.innerHTML = itemToInsert;
+            while(div.firstChild){
+                insertElementBefore(this.element, div.firstChild);
+            }
+            return this;
         } else {
-            return this.element.parentNode.insertBefore(itemToInsert.cloneNode(true), this.element);
+            return insertElementBefore(this.element, itemToInsert.cloneNode(true));
+        }
+    };
+
+    function insertElementAfter(elementToInsertAfter, itemToInsert) {
+        return elementToInsertAfter.parentNode.insertBefore(itemToInsert, elementToInsertAfter.nextSibling);
+    }
+
+    jDomItem.prototype.after = function (itemToInsert) {
+        if(typeof itemToInsert === 'string'){
+            var div = document.createElement('div');
+            div.innerHTML = itemToInsert;
+            while(div.firstChild){
+                insertElementAfter(this.element, div.firstChild);
+            }
+            return this;
+        } else {
+            return insertElementAfter(this.element, itemToInsert.cloneNode(true));
         }
     };
 
@@ -158,8 +184,13 @@ function jDom(context, exports) {
         return this.each(function () { this.empty(); })
     };
 
+    function getNormalizedIndexPositiveOrNegative(index) {
+        return index > 0 ? index : this.nodes.length + index;
+    }
+
     jDOMCollection.prototype.eq = function (index) {
         var ans;
+        index = (getNormalizedIndexPositiveOrNegative.call(this, index));
         if(this.nodes[index]){
             ans = new jDOMCollection([this.nodes[index]]);
         } else {
@@ -174,6 +205,10 @@ function jDom(context, exports) {
 
     jDOMCollection.prototype.before = function (itemToInsert) {
         return this.each(function () { this.before(itemToInsert); })
+    };
+
+    jDOMCollection.prototype.after = function (itemToInsert) {
+        return this.each(function () { this.after(itemToInsert); })
     };
 
     jDOMCollection.prototype.each = function (func) {
