@@ -6,7 +6,8 @@ function Gallery() {
         selectedItemText = document.querySelector('#gl-menu-selected-text'),
         searchInput = document.querySelector('#gl-search-input');
 
-    var itemId = 0,
+    var serverQueryUrl = 'http://localhost:3001/search/',
+        itemId = 0,
         totalItemsCount = 0,
         currDisplayedItemsCount = 0,
         allItems = [],
@@ -25,45 +26,47 @@ function Gallery() {
         bindScrolling();
     }
 
-    function addGalleryItem(title, imgSrc, imgAlt) {
+    function addGalleryItem(jsonItem) {
 
-        var galleryItem = createGalleryItem(title, imgSrc, imgAlt);
+        var galleryItem = createGalleryItem(jsonItem);
         itemsContainer.appendChild(galleryItem);
     }
 
-    function createGalleryItem(title, imgSrc, imgAlt) {
+    function createGalleryItem(jsonItem) {
 
         var item = createElementWithClassName('div', ['gl-item', 'gl-item-grid']);
-        var itemHeader = createItemHeader(title);
-        var itemContent = createItemContent(imgSrc, imgAlt);
+        var itemHeader = createItemHeader(jsonItem);
+        var itemContent = createItemContent(jsonItem);
         var itemFooter = createItemFooter();
 
         appendChilds(item, [itemHeader, itemContent, itemFooter]);
 
         item.id = itemId++;
+        item.setAttribute('data-action', 'item');
+        item.setAttribute('data-title', jsonItem['name']);
 
         return item;
     }
 
-    function createItemHeader(title) {
+    function createItemHeader(jsonItem) {
         var itemHeader = createElementWithClassName('div', ['gl-item-header']);
         var headerTitle = createElementWithClassName('h3', ['small-margin']);
-        var titleText = document.createTextNode(title);
-        headerTitle.setAttribute('title', title);
+        var titleText = document.createTextNode(jsonItem['name']);
+        headerTitle.setAttribute('title', jsonItem['name']);
         headerTitle.appendChild(titleText);
         itemHeader.appendChild(headerTitle);
 
         return itemHeader;
     }
 
-    function createItemContent(imgSrc, imgAlt) {
+    function createItemContent(jsonItem) {
         var itemContent = createElementWithClassName('div', ['gl-item-content']);
 
         var img = new Image();
         // ** src should be set AFTER registering the listeners like onclick...
-        img.src = imgSrc;
-        img.alt = imgAlt;
-        img.title = imgAlt;
+        img.src = jsonItem['imgUrl'];
+        img.alt = jsonItem['type'];
+        img.title = jsonItem['type'];
         img.style.width = '95%';
         img.style.height = '100%';
 
@@ -99,24 +102,34 @@ function Gallery() {
     }
 
     function bindButtonsClick () {
-        document.body.addEventListener('click', handleItemClickEvent, false);
+        document.body.addEventListener('click', handleClickEvent, false);
     }
 
+
+    //TODO
     function handleGridViewPressed() {
         if(currView != 'grid'){
 
         }
     }
 
-    function handleItemClickEvent(event) {
-        event.preventDefault();
-        event.stopPropagation();
+    //TODO
+    function handleListViewPressed() {
+
+    }
+
+    function handleClickEvent(event) {
         switch(event.target.dataset.action){
             case 'search':
+                event.preventDefault();
+                event.stopPropagation();
                 handleSearchButtonPressed();
                 break;
             case 'remove-btn':
                 removeGalleryItem(event);
+                break;
+            case 'item':
+                handleItemClickEvent(event);
                 break;
             case 'edit-btn':
                 editGalleryItem(event);
@@ -128,7 +141,7 @@ function Gallery() {
                 handleListViewPressed();
                 break;
             default :
-                throw Error('This can\'t be the right button');
+                throw Error('NOT A BUTTON');
                 break;
         }
     }
@@ -137,6 +150,16 @@ function Gallery() {
         var itemIdToRemove = event.target.dataset.id;
         var itemToRemove = document.getElementById(itemIdToRemove);
         itemsContainer.removeChild(itemToRemove);
+
+        currDisplayedItemsCount--;
+        updateCountHeader();
+        totalCounter.textContent = --totalItemsCount;
+    }
+
+    function handleItemClickEvent(event) {
+        var clickedItemId = event.target.dataset.id;
+        var clickedItem = document.getElementById(clickedItemId);
+        selectedItemText.textContent = clickedItem.dataset.title;
     }
 
     function editGalleryItem(event) {
@@ -154,14 +177,14 @@ function Gallery() {
     function addNextItemsToGallery(start, end) {
         currentDisplayedItems = allItems.slice(start, end);
         currentDisplayedItems.forEach(function (item) {
-            addGalleryItem(item['name'], item['imgUrl'], item['type']);
+            addGalleryItem(item);
         })
     }
 
     function onLoadHandler() {
         try {
             allItems = JSON.parse(this.responseText);
-            console.log(allItems);
+            allItems = makeArrayUnique(allItems);
             currDisplayedItemsCount = allItems.length >= itemCapacityPerPage ?
                 itemCapacityPerPage : allItems.length;
             totalItemsCount = allItems.length;
@@ -176,7 +199,7 @@ function Gallery() {
 
     function makeRequest(onLoadEvent, searchInput){
         var xhr = new XMLHttpRequest();
-        xhr.open('get', 'http://localhost:3001/search/' + searchInput, true);
+        xhr.open('get', serverQueryUrl + searchInput, true);
         xhr.onload = onLoadEvent;
         xhr.send();
     }
@@ -216,6 +239,17 @@ function Gallery() {
             currDisplayedItemsCount = endItemToDisplay;
             updateCountHeader();
         }
+    }
+
+    function makeArrayUnique(array) {
+        var namesArray = [];
+        return array.reduce(function(prev, curr) {
+            if (namesArray.indexOf(curr['name']) < 0){
+                prev.push(curr);
+                namesArray.push(curr['name']);
+            }
+            return prev;
+        }, []);
     }
 
 }
